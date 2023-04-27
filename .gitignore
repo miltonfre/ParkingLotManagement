@@ -7,3 +7,10 @@
 /src/ParkingLotManagement.Domain/obj
 /src/ParkingLotManagement.Infrastructure/obj
 /src/ParkingLotManagement.Web/obj
+/src/ParkingLotManagement.Application/bin/Debug/net6.0
+/src/ParkingLotManagement.Domain/bin/Debug/net6.0
+/src/ParkingLotManagement.Core/bin/Debug/net6.0
+/src/ParkingLotManagement.Core/obj/Debug/net6.0
+/src/ParkingLotManagement.Core/obj
+/src/ParkingLotManagement.Infrastructure/bin/Debug/net6.0
+/src/ParkingLotManagement.Web/bin/Debug/net6.0

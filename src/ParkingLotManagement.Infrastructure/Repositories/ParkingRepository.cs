@@ -65,7 +65,23 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<List<Parking>> GetAllAsync()
+        public async Task<Parking> GetLastParkingByTag(string tagNumber)
+        {
+            var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
+            connection.Open();
+
+            using var command = new SqlCommand
+            {
+                Connection = connection
+            };
+
+            command.CommandText = @"SELECT TOP(1) TagNumber ,EntryTime, ExitTime FROM Parking WHERE TagNumber=@TagNumber ORDER BY EntryTime DESC";
+            command.Parameters.AddWithValue("@TagNumber", tagNumber);
+            var result = await command.ExecuteReaderAsync();
+                return FillParking(result);
+
+        }
+            public async Task<List<Parking>> GetAllAsync()
         {
 
             var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
@@ -84,14 +100,21 @@ namespace ParkingLotManagement.Infrastructure.Repositories
 
             while (drlector.Read())
             {
-                var parking = new Parking();
-                parking.TagNumber = drlector["TagNumber"].ToString().Trim();
-                parking.EntryTime = Convert.ToDateTime(drlector["EntryTime"]) ;
-                parking.ExitTime = drlector.IsDBNull(drlector.GetOrdinal("ExitTime")) ? null : Convert.ToDateTime(drlector["ExitTime"]);
+                var parking = FillParking(drlector);
                 result.Add(parking);
             }
             return result;
 
+        }
+
+
+        private Parking FillParking(SqlDataReader reader)
+        {
+            var parking = new Parking();
+            parking.TagNumber = reader["TagNumber"].ToString().Trim();
+            parking.EntryTime = Convert.ToDateTime(reader["EntryTime"]);
+            parking.ExitTime = reader.IsDBNull(reader.GetOrdinal("ExitTime")) ? null : Convert.ToDateTime(reader["ExitTime"]);
+            return parking;
         }
     }
 }

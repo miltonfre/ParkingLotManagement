@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 #region Repositories
 builder.Services.AddSingleton<IParkingServices, ParkingServices>();
 builder.Services.AddSingleton<IParkingRepository, ParkingRepository>();
+builder.Services.AddSingleton<ICustomConfigureServices, CustomConfigureServices>();
 //builder.Services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
 //builder.Services.AddTransient<IParkingRepository, ParkingRepository>();
 //builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();

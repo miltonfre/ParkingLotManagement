@@ -16,7 +16,7 @@
                     <li>
                         <div><i class="fas fas fa-car text-warning fa-6x"></i></div>
                     </li>
-                    <li class="ms-auto"><span class="counter text-warning">15</span></li>
+                    <li class="ms-auto"><span class="counter text-warning">@Model.CapacitySpots</span></li>
                 </ul>
             </div>
         </div>
@@ -27,7 +27,7 @@
                     <li>
                         <div><i class="fas fas fa-car text-primary fa-6x"></i></div>
                     </li>
-                    <li class="ms-auto"><span class="counter text-primary">12</span></li>
+                    <li class="ms-auto"><span class="counter text-primary">@Model.HourlyFee</span></li>
                 </ul>
             </div>
         </div>
@@ -53,7 +53,7 @@
                         <div><i class="fas fa-dollar-sign text-success fa-6x"></i></div>
                     </li>
                     <li class="ms-auto">
-                        <span class="counter text-success">$15</span>
+                        <span class="counter text-success">$@Model.HourlyFee</span>
                     </li>
                 </ul>
             </div>
@@ -71,7 +71,7 @@
                         <div class="form-group mb-4">
                             <h5>Tag Number </h5>
                             <div >
-                                <input class="form-control form-control-lg" type="text" value="@Model.parkedDTO.TagNumber" placeholder="Tag Number" aria-label=".form-control-lg example">
+                                <input class="form-control form-control-lg" type="text" name="tagNumber" value='@Model.tagNumber' placeholder="Tag Number" aria-label=".form-control-lg example">
                             </div>
                         </div>
 
@@ -107,7 +107,8 @@
                                         foreach (var parked in Model.ParkedCars)
                                         {
                                             <tr>
-                                                <td>@parked.TagNumber</td>
+                                                <td>@Html.DisplayFor(modelItem =>parked.TagNumber)
+                                                </td>
                                                 <td class="txt-oflo">@parked.EntryTime</td>
                                                 <td><span class="text-success">@parked.EntryTime</span></td>
                                             </tr>

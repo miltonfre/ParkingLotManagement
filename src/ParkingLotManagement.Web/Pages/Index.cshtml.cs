@@ -13,23 +13,33 @@ namespace ParkingLotManagement.Web.Pages
     {
         private readonly ILogger<IndexModel> _logger;
 
-        //[BindProperty]
-        //public Parking Parking { get; set; }
         private readonly IParkingServices _parkingServices;
+        private readonly ICustomConfigureServices _customConfigure;
+        private InOutParkingDTO parkedDTO { get; set; }
+
         [BindProperty]
         public IReadOnlyList<ParkedCarDTO> ParkedCars { get; set; }
         [BindProperty]
-        public InOutParkingDTO parkedDTO { get; set; }
-        public IndexModel(ILogger<IndexModel> logger, IParkingServices parkingServices)
+        public string tagNumber { get; set; }
+        [BindProperty]
+        public string HourlyFee { get; set; }
+        [BindProperty]
+        public string CapacitySpots { get; set; }
+
+        public IndexModel(ILogger<IndexModel> logger, IParkingServices parkingServices, ICustomConfigureServices customConfigure)
         {
             _parkingServices = parkingServices;
+            _customConfigure = customConfigure; 
                _logger = logger;
             parkedDTO = null ?? new InOutParkingDTO();
         }
 
-        public async void OnGet()
+        public async Task<IActionResult> OnGet()
         {
             ParkedCars=await _parkingServices.GetAllAsync();
+            HourlyFee=_customConfigure.HourlyFee();
+            CapacitySpots=_customConfigure.CapacitySpots();
+            return Page();
         }
 
         //Task<ActionResult<
@@ -38,11 +48,12 @@ namespace ParkingLotManagement.Web.Pages
             await _parkingServices.Update(parkedDTO);
         }
 
-        public async void OnPostCarInAsync()
+        public async Task<IActionResult> OnPostCarInAsync()
         {
-          
-            await _parkingServices.Add(parkedDTO);
+            parkedDTO.TagNumber = tagNumber;
+              await _parkingServices.Add(parkedDTO);
             ParkedCars = await _parkingServices.GetAllAsync();
+             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -50,10 +61,7 @@ namespace ParkingLotManagement.Web.Pages
             if (!ModelState.IsValid)
             {
                 return Page();
-            }
-           
-           
-
+            }      
             return RedirectToPage("./Index");
         }
     }

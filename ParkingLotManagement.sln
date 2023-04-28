@@ -9,9 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParkingLotManagement.Web", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParkingLotManagement.Infrastructure", "src\ParkingLotManagement.Infrastructure\ParkingLotManagement.Infrastructure.csproj", "{26B8FFB7-97B6-407F-8C63-AC77F8B03CA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingLotManagement.Application", "src\ParkingLotManagement.Application\ParkingLotManagement.Application.csproj", "{2CD85B30-E98F-4CF0-9154-AFB1187E9E22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParkingLotManagement.Application", "src\ParkingLotManagement.Application\ParkingLotManagement.Application.csproj", "{2CD85B30-E98F-4CF0-9154-AFB1187E9E22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingLotManagement.Core", "src\ParkingLotManagement.Core\ParkingLotManagement.Core.csproj", "{194B87FB-5EF7-473C-8F97-64E146F2ABC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParkingLotManagement.Core", "src\ParkingLotManagement.Core\ParkingLotManagement.Core.csproj", "{194B87FB-5EF7-473C-8F97-64E146F2ABC3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{47345C85-DD9F-4D34-BC65-63DF70142467}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{5A0B0362-8CC0-4FE3-B2BD-ED2A67F09812}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +48,7 @@ Global
 		{26B8FFB7-97B6-407F-8C63-AC77F8B03CA2} = {D8C943BC-33AA-478C-AC0E-40D5FE2CBCC5}
 		{2CD85B30-E98F-4CF0-9154-AFB1187E9E22} = {D8C943BC-33AA-478C-AC0E-40D5FE2CBCC5}
 		{194B87FB-5EF7-473C-8F97-64E146F2ABC3} = {D8C943BC-33AA-478C-AC0E-40D5FE2CBCC5}
+		{5A0B0362-8CC0-4FE3-B2BD-ED2A67F09812} = {47345C85-DD9F-4D34-BC65-63DF70142467}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {41C08C90-9951-4A92-A713-1A2763E9B6DA}

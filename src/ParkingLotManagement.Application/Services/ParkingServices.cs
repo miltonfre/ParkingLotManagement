@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ParkingLotManagement.Application.DTOs;
 using ParkingLotManagement.Application.Interfaces;
+using ParkingLotManagement.Application.Validators;
 using ParkingLotManagement.Core.Entities;
 using ParkingLotManagement.Domain.DTOs;
 using ParkingLotManagement.Infrastructure.Repositories;
@@ -11,10 +12,12 @@ namespace ParkingLotManagement.Application.Services
     public class ParkingServices : IParkingServices
     {
         private readonly IParkingRepository _parkingRepository;
-        private readonly IMapper mapper;
-        public ParkingServices(IParkingRepository parkingRepository, IMapper mapper)
+        private readonly ICustomConfigureServices _customConfigureServices;
+         private readonly IMapper mapper;
+        public ParkingServices(IParkingRepository parkingRepository, IMapper mapper, ICustomConfigureServices customConfigureServices)
         {
             _parkingRepository = parkingRepository;
+            _customConfigureServices = customConfigureServices;
             this.mapper = mapper;
         }
 
@@ -24,16 +27,83 @@ namespace ParkingLotManagement.Application.Services
             return mapper.Map<List<ParkedCarDTO>>(parked);
         }
 
-        public async Task<bool> Add(InOutParkingDTO parking)
+        public async Task<OperationResult> Add(InOutParkingDTO parking)
         {
+            var resultOperation = new OperationResult();
+            var result = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
+            if (result != null && result.ExitTime == null)
+            {
+                resultOperation.IsValid = false;
+                resultOperation.Message = "the vehicle has not entered";
+                return resultOperation;
+            }
             var parkingAdd=mapper.Map<Parking>(parking);
-            return await _parkingRepository.Add(parkingAdd);
+            var success = await _parkingRepository.Add(parkingAdd);
+            resultOperation.IsValid = success;
+            resultOperation.Message = "Successful";
+            return resultOperation;
         }
-
-        public async Task<bool> Update(InOutParkingDTO parking)
+        public async Task<Parking> GetLastParkingByTag(InOutParkingDTO parking)
         {
+            return await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
+        }
+        private decimal AmmountToPay(Parking parking)
+        {
+            var hourlyFee = int.Parse(_customConfigureServices.HourlyFee());
+            TimeSpan totalHoursParked = parking.EntryTime - DateTime.Now;
+            return Convert.ToDecimal(Math.Ceiling(totalHoursParked.TotalHours) * hourlyFee);
+        } 
+
+        public async Task<OperationResult> CalculateAmmountToPay(InOutParkingDTO parking)
+        {
+            var parkingDB = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
+
+            var resultOperation = new OperationResult();
+            var result = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
+            if (result == null || result.ExitTime != null)
+            {
+                resultOperation.IsValid = false;
+                resultOperation.Message = "The vehicle has not entered";
+                return resultOperation;
+            }
+            
+            TimeSpan totalHoursParked = result.EntryTime - DateTime.Now;
+            resultOperation.IsValid = true;
+            var toPay= AmmountToPay(result);
+            resultOperation.Message = string.Format("Value to pay ${toPay}");
+            return resultOperation;
+
+        }
+        private async Task<bool> IsVehicleParked(InOutParkingDTO parking)
+        {
+            var result = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
+            if (result == null || result.ExitTime != null)
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<OperationResult> Update(InOutParkingDTO parking)
+        {
+            var resultOperation = new OperationResult();
+            var result = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
+            if (result == null || result.ExitTime != null)
+            {
+                resultOperation.IsValid = false;
+                resultOperation.Message = "The vehicle has not entered";
+                return resultOperation;
+            }
+            
             var parkingAdd = mapper.Map<Parking>(parking);
-            return await _parkingRepository.Update(parkingAdd.Id, parkingAdd);
+            parkingAdd.Id = result.Id;
+            parkingAdd.ExitTime = DateTime.Now;
+            parkingAdd.EntryTime = result.EntryTime;
+            var ammountToPay= AmmountToPay(parkingAdd);
+            parkingAdd.FeePaid = ammountToPay;
+            var success =await _parkingRepository.Update(parkingAdd.Id, parkingAdd);
+            resultOperation.IsValid = success;
+            resultOperation.Message = string.Format("Successful, Fee to pay is {0}", ammountToPay);
+            return resultOperation;
         }
     }
 }

@@ -21,13 +21,12 @@ namespace ParkingLotManagement.Application.Extensions
                     logger.LogInformation("Migrating database.");
 
                     logger.LogInformation("Creating DB if not exist.");
+                    string connString = configuration.GetValue<string>("DatabaseSettings:ConnectionString");
+                    CreateDatabase(connString);
 
-                    CreateDatabase(configuration);
-
-                    var connection = new SqlConnection((configuration.GetValue<string>("DatabaseSettings:ConnectionString")));
+                    var connection = new SqlConnection(connString);
                     
-                    connection.Open();
-                    
+                    connection.Open();                  
                     
 
                     using var command = new SqlCommand
@@ -41,14 +40,19 @@ namespace ParkingLotManagement.Application.Extensions
                     command.CommandText = "DROP TABLE IF EXISTS Parking";
                     command.ExecuteNonQuery();
 
-                    command.CommandText = @"CREATE TABLE Parking( Id int IDENTITY(1,1) NOT NULL, 
-                                                                 TagNumber VARCHAR(10) NOT NULL,
-                                                                 EntryTime datetime NOT NULL,
-                                                                 ExitTime datetime NULL,
-                                                                 CONSTRAINT PK_ParkingSpot PRIMARY KEY (Id))";
+                    command.CommandText = @"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Parking' and xtype='U')
+                                                        CREATE TABLE Parking( Id int    IDENTITY(1,1) NOT NULL, 
+                                                                         TagNumber  VARCHAR(10) NOT NULL,
+                                                                         EntryTime  DATETIME NOT NULL,
+                                                                         ExitTime   DATETIME NULL,
+                                                                         FeePaid    DECIMAL(10, 2),
+                                                                         CONSTRAINT PK_ParkingSpot PRIMARY KEY (Id))";
                     command.ExecuteNonQuery();
 
-                    logger.LogInformation("Migrated postresql database.");
+                    logger.LogInformation("Creating procedures");
+                    CreateProcedures(connString);
+                    logger.LogInformation("Procedures created");
+                    logger.LogInformation("Database Migration endedn succesful");
 
                 }
                 catch (Exception ex)
@@ -59,11 +63,48 @@ namespace ParkingLotManagement.Application.Extensions
             return host;
         }
 
-        private static void CreateDatabase(IConfiguration configuration)
+        private static void CreateProcedures(string connectionString)
+        {
+            var connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            using var command = new SqlCommand
+            {
+                Connection = connection
+            };
+
+            command.CommandText = @"CREATE OR ALTER PROCEDURE AverageCarsPerDay
+                                            AS
+                                            SELECT AVG(CarsPerDay) AS AverageCarsPerDay
+                                            FROM (
+                                                SELECT CONVERT(DATE, EntryTime) AS EntryDate, COUNT(*) AS CarsPerDay
+                                                FROM Parking
+                                                WHERE EntryTime >= DATEADD(day, -30, GETDATE())
+                                                GROUP BY CONVERT(DATE, EntryTime)
+                                            ) AS DailyCars
+                                            GO";
+            command.ExecuteNonQuery();
+
+            command.CommandText = @"CREATE OR ALTER PROCEDURE AverageRevenuePerDay
+                                    AS
+                                    SELECT AVG(RevenuePerDay) AS AverageRevenuePerDay
+                                    FROM (
+                                        SELECT CONVERT(DATE, EntryTime) AS EntryDate, SUM(FeePaid) AS RevenuePerDay
+                                        FROM Parking
+                                        WHERE EntryTime >= DATEADD(day, -30, GETDATE()) AND ExitTime IS NOT NULL
+                                        GROUP BY CONVERT(DATE, EntryTime)
+                                    ) AS DailyRevenue
+                                    GO";
+            command.ExecuteNonQuery();
+
+
+        }
+
+        private static void CreateDatabase(string connectionString)
         {
 
 
-            var connection = new SqlConnection(configuration.GetValue<string>("DatabaseSettings:DefaulConnectionString"));
+            var connection = new SqlConnection(connectionString);
             connection.Open();
 
             using var command = new SqlCommand

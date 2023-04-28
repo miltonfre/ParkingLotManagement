@@ -30,7 +30,7 @@ namespace ParkingLotManagement.Infrastructure.Repositories
 
             command.CommandText = "INSERT INTO Parking (TagNumber,EntryTime) Values (@TagNumber,@EntryTime)";
             command.Parameters.AddWithValue("@TagNumber", parking.TagNumber);
-            command.Parameters.AddWithValue("@EntryTime", DateTime.UtcNow);
+            command.Parameters.AddWithValue("@EntryTime", DateTime.Now);
             var affected = await command.ExecuteNonQueryAsync();            
             if (affected == 0)
                 return false;
@@ -51,13 +51,13 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             command.CommandText = @"UPDATE Parking SET " +
                                     "TagNumber=@TagNumber" +
                                     ",EntryTime=@EntryTime," +
-                                    "ExitTime=@ExitTime" +
+                                    "ExitTime=@ExitTime " +
                                     "WHERE Id=@Id";
 
             command.Parameters.AddWithValue("@TagNumber", parking.TagNumber);
             command.Parameters.AddWithValue("@EntryTime", parking.EntryTime);
             command.Parameters.AddWithValue("@ExitTime", parking.ExitTime);
-            command.Parameters.AddWithValue("@Id", parking.ExitTime);
+            command.Parameters.AddWithValue("@Id", parking.Id);
             var affected = await command.ExecuteNonQueryAsync();
             if (affected == 0)
                 return false;
@@ -65,7 +65,9 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<Parking> GetLastParkingByTag(string tagNumber)
+       
+
+            public async Task<Parking> GetLastParkingByTag(string tagNumber)
         {
             var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
             connection.Open();
@@ -75,10 +77,19 @@ namespace ParkingLotManagement.Infrastructure.Repositories
                 Connection = connection
             };
 
-            command.CommandText = @"SELECT TOP(1) TagNumber ,EntryTime, ExitTime FROM Parking WHERE TagNumber=@TagNumber ORDER BY EntryTime DESC";
+            command.CommandText = @"SELECT TOP(1) Id, TagNumber ,EntryTime, ExitTime FROM Parking WHERE TagNumber=@TagNumber ORDER BY EntryTime DESC";
             command.Parameters.AddWithValue("@TagNumber", tagNumber);
             var result = await command.ExecuteReaderAsync();
-                return FillParking(result);
+            if (result.HasRows)
+            {
+                var parking = new Parking();
+                while (result.Read())
+                {
+                    parking = FillParking(result);
+                }
+                return parking;
+            }
+            return null;
 
         }
             public async Task<List<Parking>> GetAllAsync()
@@ -92,7 +103,7 @@ namespace ParkingLotManagement.Infrastructure.Repositories
                 Connection = connection
             };
 
-            command.CommandText = @"SELECT  TagNumber ,EntryTime, ExitTime FROM Parking WHERE ExitTime IS NULL";
+            command.CommandText = @"SELECT  Id, TagNumber ,EntryTime, ExitTime FROM Parking WHERE ExitTime IS NULL";
 
 
             var drlector = await command.ExecuteReaderAsync();
@@ -111,6 +122,7 @@ namespace ParkingLotManagement.Infrastructure.Repositories
         private Parking FillParking(SqlDataReader reader)
         {
             var parking = new Parking();
+            parking.Id = int.Parse(reader["Id"].ToString().Trim());
             parking.TagNumber = reader["TagNumber"].ToString().Trim();
             parking.EntryTime = Convert.ToDateTime(reader["EntryTime"]);
             parking.ExitTime = reader.IsDBNull(reader.GetOrdinal("ExitTime")) ? null : Convert.ToDateTime(reader["ExitTime"]);

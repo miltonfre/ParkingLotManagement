@@ -6,6 +6,10 @@ using ParkingLotManagement.Domain.DTOs;
 using ParkingLotManagement.Application.Interfaces;
 using ParkingLotManagement.Application.Services;
 using ParkingLotManagement.Application.DTOs;
+using ParkingLotManagement.Application.Validators;
+using ParkingLotManagement.Core.Entities;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Logging;
 
 namespace ParkingLotManagement.Web.Pages
 {
@@ -20,11 +24,14 @@ namespace ParkingLotManagement.Web.Pages
         [BindProperty]
         public IReadOnlyList<ParkedCarDTO> ParkedCars { get; set; }
         [BindProperty]
+        [Required]
         public string tagNumber { get; set; }
         [BindProperty]
-        public string HourlyFee { get; set; }
+        public string? HourlyFee { get; set; }
         [BindProperty]
-        public string CapacitySpots { get; set; }
+        public string? CapacitySpots { get; set; }
+        [BindProperty]
+        public OperationResult ResultOperation { get; set; }=new OperationResult();
 
         public IndexModel(ILogger<IndexModel> logger, IParkingServices parkingServices, ICustomConfigureServices customConfigure)
         {
@@ -42,18 +49,47 @@ namespace ParkingLotManagement.Web.Pages
             return Page();
         }
 
-        //Task<ActionResult<
-        public async void OnPostCarOutAsync()
+        public async Task<IActionResult> OnPostCarOutAsync()
         {
-            await _parkingServices.Update(parkedDTO);
+            try
+            {
+                parkedDTO.TagNumber = tagNumber;
+                ResultOperation = await _parkingServices.Update(parkedDTO);
+                if (ResultOperation.IsValid)
+                {
+                    await OnGet();
+                }
+            }
+            catch (Exception ex)
+            {
+                ResultOperation.IsValid= false;
+                ResultOperation.Message = "An error has occurred";
+                _logger.LogError(ex, ex.Message);
+            }
+            return Page();
         }
 
         public async Task<IActionResult> OnPostCarInAsync()
         {
-            parkedDTO.TagNumber = tagNumber;
-              await _parkingServices.Add(parkedDTO);
-            ParkedCars = await _parkingServices.GetAllAsync();
-             return Page();
+            try
+            {
+                parkedDTO.TagNumber = tagNumber;
+                ResultOperation = await _parkingServices.Add(parkedDTO);
+                if (ResultOperation.IsValid)
+                {
+                    await OnGet();
+                }
+            }
+            catch (Exception ex)
+            {
+                ResultOperation.IsValid = false;
+                ResultOperation.Message = "An error has occurred";
+                _logger.LogError(ex, ex.Message);
+            }
+          
+              
+           
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -63,6 +99,12 @@ namespace ParkingLotManagement.Web.Pages
                 return Page();
             }      
             return RedirectToPage("./Index");
+        }
+
+        public double ElapsedTime(DateTime dateTime)
+        {
+            TimeSpan totalHoursParked = DateTime.Now - dateTime;
+            return Math.Ceiling(totalHoursParked.TotalMinutes);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using ParkingLotManagement.Application.Interfaces;
 using ParkingLotManagement.Infrastructure.Repositories;
 
-
 namespace ParkingLotManagement.Application.Services
 {
     public class StatsService : IStatsService

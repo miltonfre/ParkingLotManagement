@@ -5,7 +5,6 @@ using ParkingLotManagement.Application.Validators;
 using ParkingLotManagement.Core.Entities;
 using ParkingLotManagement.Domain.DTOs;
 using ParkingLotManagement.Infrastructure.Repositories;
-using System.Data.SqlClient;
 
 namespace ParkingLotManagement.Application.Services
 {

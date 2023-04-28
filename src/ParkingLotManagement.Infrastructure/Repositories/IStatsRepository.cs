@@ -1,6 +1,4 @@
-﻿
-
-namespace ParkingLotManagement.Infrastructure.Repositories
+﻿namespace ParkingLotManagement.Infrastructure.Repositories
 {
     public interface IStatsRepository
     {

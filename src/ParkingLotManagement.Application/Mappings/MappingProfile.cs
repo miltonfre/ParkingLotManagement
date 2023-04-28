@@ -1,6 +1,4 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using ParkingLotManagement.Application.DTOs;
 using ParkingLotManagement.Core.Entities;
 using ParkingLotManagement.Domain.DTOs;

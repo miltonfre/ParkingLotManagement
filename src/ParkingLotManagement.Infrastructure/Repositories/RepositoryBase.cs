@@ -1,7 +1,4 @@
-﻿
-
-using System.Data;
-
+﻿using System.Data;
 
 namespace ParkingLotManagement.Infrastructure.Repositories
 {
@@ -9,7 +6,6 @@ namespace ParkingLotManagement.Infrastructure.Repositories
     {
         protected IDbTransaction Transaction { get; private set; }
         protected IDbConnection Connection { get { return Transaction.Connection; } }
-
         public RepositoryBase(IDbTransaction transaction)
         {
             Transaction = transaction;

@@ -1,11 +1,8 @@
 ﻿
 using Microsoft.Extensions.Configuration;
 using ParkingLotManagement.Core.Entities;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
-using System.Reflection.PortableExecutable;
-using System.Transactions;
+
 
 namespace ParkingLotManagement.Infrastructure.Repositories
 {

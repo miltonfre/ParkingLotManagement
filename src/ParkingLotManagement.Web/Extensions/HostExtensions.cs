@@ -1,7 +1,4 @@
-﻿
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 
 namespace ParkingLotManagement.Application.Extensions
@@ -25,9 +22,9 @@ namespace ParkingLotManagement.Application.Extensions
                     CreateDatabase(connString);
 
                     var connection = new SqlConnection(connString);
-                    
-                    connection.Open();                  
-                    
+
+                    connection.Open();
+
 
                     using var command = new SqlCommand
                     {
@@ -62,7 +59,6 @@ namespace ParkingLotManagement.Application.Extensions
             }
             return host;
         }
-
         private static void CreateProcedures(string connectionString)
         {
             var connection = new SqlConnection(connectionString);
@@ -104,7 +100,6 @@ namespace ParkingLotManagement.Application.Extensions
 
 
         }
-
         private static void CreateDatabase(string connectionString)
         {
 
@@ -122,9 +117,9 @@ namespace ParkingLotManagement.Application.Extensions
 
             if (result == DBNull.Value)
             {
-                
-                    command.CommandText = "CREATE DATABASE ParkingDB";
-                    command.ExecuteNonQuery();
+
+                command.CommandText = "CREATE DATABASE ParkingDB";
+                command.ExecuteNonQuery();
             }
 
             if (connection.State != ConnectionState.Closed)
@@ -132,10 +127,5 @@ namespace ParkingLotManagement.Application.Extensions
                 connection.Close();
             }
         }
-
-
-
-
-
     }
 }

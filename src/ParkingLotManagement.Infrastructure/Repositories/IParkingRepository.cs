@@ -1,5 +1,4 @@
-﻿
-using ParkingLotManagement.Core.Entities;
+﻿using ParkingLotManagement.Core.Entities;
 
 namespace ParkingLotManagement.Infrastructure.Repositories
 {

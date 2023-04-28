@@ -4,5 +4,6 @@
     {
         Task<decimal> AverageRevenuePerDay();
         Task<decimal> AverageCarsPerDay();
+        Task<decimal> TotalRevenueToday();
     }
 }

@@ -17,14 +17,14 @@ namespace ParkingLotManagement.Application.Services
             _configuration = configuration;
         }
 
-        public string CapacitySpots()
+        public int CapacitySpots()
         {
-            return _configuration["CustomSettings:CapacitySpots"];
+            return int.Parse(_configuration["CustomSettings:CapacitySpots"]);
         }
 
-        public string HourlyFee()
+        public decimal HourlyFee()
         {
-            return _configuration["CustomSettings:HourlyFee"];
+            return decimal.Parse(_configuration["CustomSettings:HourlyFee"]);
         }
     }
 }

@@ -81,8 +81,7 @@ namespace ParkingLotManagement.Application.Extensions
                                                 FROM Parking
                                                 WHERE EntryTime >= DATEADD(day, -30, GETDATE())
                                                 GROUP BY CONVERT(DATE, EntryTime)
-                                            ) AS DailyCars
-                                            GO";
+                                            ) AS DailyCars";
             command.ExecuteNonQuery();
 
             command.CommandText = @"CREATE OR ALTER PROCEDURE AverageRevenuePerDay
@@ -93,8 +92,14 @@ namespace ParkingLotManagement.Application.Extensions
                                         FROM Parking
                                         WHERE EntryTime >= DATEADD(day, -30, GETDATE()) AND ExitTime IS NOT NULL
                                         GROUP BY CONVERT(DATE, EntryTime)
-                                    ) AS DailyRevenue
-                                    GO";
+                                    ) AS DailyRevenue";
+            command.ExecuteNonQuery();
+
+            command.CommandText = @"CREATE OR ALTER PROCEDURE TotalRevenueToday 
+                                    AS
+                                        SELECT SUM(FeePaid) as TotalRevenueToday 
+                                        FROM Parking
+                                        WHERE ExitTime >= CONVERT(date, GETDATE())";
             command.ExecuteNonQuery();
 
 

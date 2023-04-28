@@ -7,7 +7,6 @@ namespace ParkingLotManagement.Application.Services
     public class StatsService : IStatsService
     {
         private readonly IStatsRepository _statsRepository;
-
         public StatsService(IStatsRepository statsRepository)
         {
             _statsRepository = statsRepository;
@@ -16,10 +15,13 @@ namespace ParkingLotManagement.Application.Services
         {
             return await _statsRepository.AverageCarsPerDay();
         }
-
         public async Task<decimal> AverageRevenuePerDay()
         {
             return await _statsRepository.AverageRevenuePerDay();
+        }
+        public async Task<decimal> TotalRevenueToday()
+        {
+            return await _statsRepository.TotalRevenueToday();
         }
     }
 }

@@ -6,5 +6,6 @@ namespace ParkingLotManagement.Infrastructure.Repositories
     {
        Task<decimal> AverageRevenuePerDay();
         Task<decimal> AverageCarsPerDay();
+        Task<decimal> TotalRevenueToday();
     }
 }

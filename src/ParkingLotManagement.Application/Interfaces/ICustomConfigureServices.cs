@@ -8,7 +8,7 @@ namespace ParkingLotManagement.Application.Interfaces
 {
     public interface ICustomConfigureServices
     {
-         string CapacitySpots();
-         string HourlyFee();
+         int CapacitySpots();
+         decimal HourlyFee();
     }
 }

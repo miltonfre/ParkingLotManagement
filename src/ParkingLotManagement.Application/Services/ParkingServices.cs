@@ -30,6 +30,12 @@ namespace ParkingLotManagement.Application.Services
         public async Task<OperationResult> Add(InOutParkingDTO parking)
         {
             var resultOperation = new OperationResult();
+            if (string.IsNullOrEmpty(parking.TagNumber) || string.IsNullOrWhiteSpace(parking.TagNumber))
+            {
+                resultOperation.IsValid = false;
+                resultOperation.Message = "Tag Number can't be null";
+                return resultOperation;
+            }
             var result = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
             if (result != null && result.ExitTime == null)
             {
@@ -49,16 +55,26 @@ namespace ParkingLotManagement.Application.Services
         }
         private decimal AmmountToPay(Parking parking)
         {
-            var hourlyFee = int.Parse(_customConfigureServices.HourlyFee());
+            var hourlyFee = _customConfigureServices.HourlyFee();
             TimeSpan totalHoursParked = parking.EntryTime - DateTime.Now;
-            return Convert.ToDecimal(Math.Ceiling(totalHoursParked.TotalHours) * hourlyFee);
+            var upperHour = (Math.Ceiling((decimal)totalHoursParked.TotalHours) + 1);
+            return upperHour  * hourlyFee;
         } 
 
         public async Task<OperationResult> CalculateAmmountToPay(InOutParkingDTO parking)
         {
-            var parkingDB = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
+            
 
             var resultOperation = new OperationResult();
+
+            if (string.IsNullOrEmpty(parking.TagNumber) || string.IsNullOrWhiteSpace(parking.TagNumber))
+            {
+                resultOperation.IsValid = false;
+                resultOperation.Message = "Tag Number can't be null";
+                return resultOperation;
+            }
+
+            var parkingDB = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
             var result = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
             if (result == null || result.ExitTime != null)
             {
@@ -86,6 +102,13 @@ namespace ParkingLotManagement.Application.Services
         public async Task<OperationResult> Update(InOutParkingDTO parking)
         {
             var resultOperation = new OperationResult();
+            if (string.IsNullOrEmpty(parking.TagNumber) || string.IsNullOrWhiteSpace(parking.TagNumber))
+            {
+                resultOperation.IsValid = false;
+                resultOperation.Message = "Tag Number shoud have a value";
+                return resultOperation;
+            }
+            
             var result = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
             if (result == null || result.ExitTime != null)
             {

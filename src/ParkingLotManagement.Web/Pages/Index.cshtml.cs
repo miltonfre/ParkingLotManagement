@@ -4,12 +4,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using MediatR;
 using ParkingLotManagement.Domain.DTOs;
 using ParkingLotManagement.Application.Interfaces;
-using ParkingLotManagement.Application.Services;
 using ParkingLotManagement.Application.DTOs;
 using ParkingLotManagement.Application.Validators;
-using ParkingLotManagement.Core.Entities;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.Extensions.Logging;
 
 namespace ParkingLotManagement.Web.Pages
 {
@@ -18,34 +15,47 @@ namespace ParkingLotManagement.Web.Pages
         private readonly ILogger<IndexModel> _logger;
 
         private readonly IParkingServices _parkingServices;
+        private readonly IStatsService _statsServices;
         private readonly ICustomConfigureServices _customConfigure;
         private InOutParkingDTO parkedDTO { get; set; }
 
         [BindProperty]
-        public IReadOnlyList<ParkedCarDTO> ParkedCars { get; set; }
+        public IReadOnlyList<ParkedCarDTO> parkedCars { get; set; }
         [BindProperty]
         [Required]
         public string tagNumber { get; set; }
         [BindProperty]
-        public string? HourlyFee { get; set; }
+        public decimal hourlyFee { get; set; }
         [BindProperty]
-        public string? CapacitySpots { get; set; }
+        public int capacitySpots { get; set; }
+        [BindProperty]
+        public decimal averageRevenuePerDay { get; set; }
+        [BindProperty]
+        public decimal averageCarsPerDay { get; set; }
+        [BindProperty]
+        public decimal totalRevenueToday { get; set; }
+
         [BindProperty]
         public OperationResult ResultOperation { get; set; }=new OperationResult();
 
-        public IndexModel(ILogger<IndexModel> logger, IParkingServices parkingServices, ICustomConfigureServices customConfigure)
+        public IndexModel(ILogger<IndexModel> logger, IParkingServices parkingServices, ICustomConfigureServices customConfigure, IStatsService statsServices)
         {
+            _statsServices = statsServices;
             _parkingServices = parkingServices;
-            _customConfigure = customConfigure; 
-               _logger = logger;
+            _customConfigure = customConfigure;
+            _logger = logger;
             parkedDTO = null ?? new InOutParkingDTO();
         }
 
         public async Task<IActionResult> OnGet()
         {
-            ParkedCars=await _parkingServices.GetAllAsync();
-            HourlyFee=_customConfigure.HourlyFee();
-            CapacitySpots=_customConfigure.CapacitySpots();
+            parkedCars=await _parkingServices.GetAllAsync();
+            hourlyFee=_customConfigure.HourlyFee();
+            capacitySpots=_customConfigure.CapacitySpots();
+            averageRevenuePerDay =  await _statsServices.AverageRevenuePerDay();
+            averageCarsPerDay =     await _statsServices.AverageCarsPerDay();
+            totalRevenueToday =     await _statsServices.TotalRevenueToday();
+
             return Page();
         }
 
@@ -57,7 +67,7 @@ namespace ParkingLotManagement.Web.Pages
                 ResultOperation = await _parkingServices.Update(parkedDTO);
                 if (ResultOperation.IsValid)
                 {
-                    await OnGet();
+                    tagNumber = "";
                 }
             }
             catch (Exception ex)
@@ -66,6 +76,7 @@ namespace ParkingLotManagement.Web.Pages
                 ResultOperation.Message = "An error has occurred";
                 _logger.LogError(ex, ex.Message);
             }
+            await OnGet();
             return Page();
         }
 
@@ -77,7 +88,7 @@ namespace ParkingLotManagement.Web.Pages
                 ResultOperation = await _parkingServices.Add(parkedDTO);
                 if (ResultOperation.IsValid)
                 {
-                    await OnGet();
+                    tagNumber = "";
                 }
             }
             catch (Exception ex)
@@ -86,21 +97,11 @@ namespace ParkingLotManagement.Web.Pages
                 ResultOperation.Message = "An error has occurred";
                 _logger.LogError(ex, ex.Message);
             }
-          
-              
-           
+            await OnGet();
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }      
-            return RedirectToPage("./Index");
-        }
-
+       
         public double ElapsedTime(DateTime dateTime)
         {
             TimeSpan totalHoursParked = DateTime.Now - dateTime;

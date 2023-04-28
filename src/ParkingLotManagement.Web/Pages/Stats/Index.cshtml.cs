@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ParkingLotManagement.Web.Pages
 {
-    public class StatsModel : PageModel
+    public class StatsIndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
 
-        public StatsModel(ILogger<IndexModel> logger)
+        public StatsIndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
         }

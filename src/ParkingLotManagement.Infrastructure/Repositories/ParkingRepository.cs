@@ -9,7 +9,7 @@ using System.Transactions;
 
 namespace ParkingLotManagement.Infrastructure.Repositories
 {
-   
+
     public class ParkingRepository : IParkingRepository
     {
         private readonly IConfiguration _configuration;
@@ -17,10 +17,9 @@ namespace ParkingLotManagement.Infrastructure.Repositories
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
-
         public async Task<bool> Add(Parking parking)
         {
-           var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
+            var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
             connection.Open();
 
             using var command = new SqlCommand
@@ -31,13 +30,12 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             command.CommandText = "INSERT INTO Parking (TagNumber,EntryTime) Values (@TagNumber,@EntryTime)";
             command.Parameters.AddWithValue("@TagNumber", parking.TagNumber);
             command.Parameters.AddWithValue("@EntryTime", DateTime.Now);
-            var affected = await command.ExecuteNonQueryAsync();            
+            var affected = await command.ExecuteNonQueryAsync();
             if (affected == 0)
                 return false;
 
-            return true;          
+            return true;
         }
-
         public async Task<bool> Update(int id, Parking parking)
         {
             var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
@@ -51,12 +49,14 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             command.CommandText = @"UPDATE Parking SET " +
                                     "TagNumber=@TagNumber" +
                                     ",EntryTime=@EntryTime," +
-                                    "ExitTime=@ExitTime " +
+                                    "ExitTime=@ExitTime," +
+                                    "FeePaid=@FeePaid " +
                                     "WHERE Id=@Id";
 
             command.Parameters.AddWithValue("@TagNumber", parking.TagNumber);
             command.Parameters.AddWithValue("@EntryTime", parking.EntryTime);
             command.Parameters.AddWithValue("@ExitTime", parking.ExitTime);
+            command.Parameters.AddWithValue("@FeePaid", parking.FeePaid);
             command.Parameters.AddWithValue("@Id", parking.Id);
             var affected = await command.ExecuteNonQueryAsync();
             if (affected == 0)
@@ -64,10 +64,7 @@ namespace ParkingLotManagement.Infrastructure.Repositories
 
             return true;
         }
-
-       
-
-            public async Task<Parking> GetLastParkingByTag(string tagNumber)
+        public async Task<Parking> GetLastParkingByTag(string tagNumber)
         {
             var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
             connection.Open();
@@ -92,7 +89,7 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             return null;
 
         }
-            public async Task<List<Parking>> GetAllAsync()
+        public async Task<List<Parking>> GetAllAsync()
         {
 
             var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
@@ -117,8 +114,6 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             return result;
 
         }
-
-
         private Parking FillParking(SqlDataReader reader)
         {
             var parking = new Parking();

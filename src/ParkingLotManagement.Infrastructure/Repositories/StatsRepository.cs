@@ -9,7 +9,6 @@ namespace ParkingLotManagement.Infrastructure.Repositories
     public class StatsRepository : IStatsRepository
     {
         private readonly IConfiguration _configuration;
-
         public StatsRepository(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -25,9 +24,13 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             };
             command.CommandType = CommandType.StoredProcedure;
             command.CommandText = "AverageCarsPerDay";
-          return  (decimal) await command.ExecuteScalarAsync();
+            var result = await command.ExecuteScalarAsync();
+            if (result == DBNull.Value)
+            {
+                return 0;
+            }
+            return Convert.ToDecimal(result);
         }
-
         public async Task<decimal> AverageRevenuePerDay()
         {
             var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
@@ -39,7 +42,30 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             };
             command.CommandType = CommandType.StoredProcedure;
             command.CommandText = "AverageRevenuePerDay";
-            return (decimal)await command.ExecuteScalarAsync();
+           var result = await command.ExecuteScalarAsync();
+            if (result== DBNull.Value)
+            {
+                return 0;
+            }
+            return Convert.ToDecimal(result);
+        }
+        public async Task<decimal> TotalRevenueToday()
+        {
+            var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
+            connection.Open();
+
+            using var command = new SqlCommand
+            {
+                Connection = connection
+            };
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = "TotalRevenueToday";
+            var result = await command.ExecuteScalarAsync();
+            if (result == DBNull.Value)
+            {
+                return 0;
+            }
+            return Convert.ToDecimal(result);
         }
     }
 }

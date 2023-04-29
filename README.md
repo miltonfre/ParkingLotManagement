@@ -1,7 +1,7 @@
 # ParkingLotManagement
 
 This is A web app that manages a parking lot and the flow of cars coming in/out.
-In this application uses razor pages and .Net 6 and In this solution, the principles of Clean architecture where comple bussiness logic and the application domain are at the center of te solution.
+In this application uses razor pages and .Net 6 and In this solution, the principles of Clean architecture where bussiness logic and the application domain are at the center of te solution.
 
 
 <img width="424" alt="image" src="https://user-images.githubusercontent.com/5255854/235308554-e436c067-46be-4d03-bd85-90f38276e367.png">

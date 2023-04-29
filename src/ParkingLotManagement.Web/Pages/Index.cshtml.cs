@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-using MediatR;
-using ParkingLotManagement.Domain.DTOs;
+
 using ParkingLotManagement.Application.Interfaces;
 using ParkingLotManagement.Application.DTOs;
-using ParkingLotManagement.Application.Validators;
-using System.ComponentModel.DataAnnotations;
-
 namespace ParkingLotManagement.Web.Pages
 {
     public class IndexModel : PageModel

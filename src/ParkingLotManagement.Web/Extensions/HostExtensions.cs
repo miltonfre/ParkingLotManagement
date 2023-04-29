@@ -18,9 +18,16 @@ namespace ParkingLotManagement.Application.Extensions
                     logger.LogInformation("Migrating database.");
 
                     logger.LogInformation("Creating DB if not exist.");
-                    string connString = configuration.GetValue<string>("DatabaseSettings:ConnectionString");
-                    CreateDatabase(connString);
+                    string connString = configuration.GetValue<string>("DatabaseSettings:InitialConnectionString");
 
+                    string createDatabase = configuration.GetValue<string>("InitialSettings:CreateInitialDatabase");
+                    if (createDatabase == "1")
+                    {
+                        CreateDatabase(connString);
+                    }
+                   
+
+                    connString = configuration.GetValue<string>("DatabaseSettings:ConnectionString");
                     var connection = new SqlConnection(connString);
 
                     connection.Open();
@@ -31,11 +38,11 @@ namespace ParkingLotManagement.Application.Extensions
                         Connection = connection
                     };
 
-                    command.CommandText = $"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'ParkingDB') CREATE DATABASE [ParkingDB];";
-                    command.ExecuteNonQuery();
+                    //command.CommandText = $"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'ParkingDB1') CREATE DATABASE [ParkingDB1];";
+                    //command.ExecuteNonQuery();
 
-                    command.CommandText = "DROP TABLE IF EXISTS Parking";
-                    command.ExecuteNonQuery();
+                    //command.CommandText = "DROP TABLE IF EXISTS Parking";
+                    //command.ExecuteNonQuery();
 
                     command.CommandText = @"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Parking' and xtype='U')
                                                         CREATE TABLE Parking( Id int    IDENTITY(1,1) NOT NULL, 

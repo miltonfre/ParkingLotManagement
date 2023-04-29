@@ -9,7 +9,7 @@
     <!-- ============================================================== -->
     <!-- Row -->
     <div class="row">
-
+        
         <!-- Column -->
         <!-- Column -->
         <div class="col-md-6">
@@ -17,29 +17,26 @@
                 <div>   
                 <div class="card">
                     <div class="card-body">
-                            <form class="form-horizontal form-material" method="post">
-                            <div class="form-group mb-4">
-                                <label for="tagNumber">Tag Number:</label>
+                            <div class="form-horizontal form-material">
+                                <div class="form-group mb-4">
+                                    <label for="tagNumber">Tag Number:</label>
+                                    <div>
+                                        <input class="form-control form-control-lg required" required="" type="text" id="tagNumber" maxlength="10" name="tagNumber" placeholder="Tag Number" aria-label="tag number" />
+                                 </div>
+                                </div>
                                 <div>
-                                  @*  <input class="form-control form-control-lg required" type="text" id="tagNumber" maxlength="10" name="tagNumber" value='@Model.tagNumber' placeholder="Tag Number" aria-label=".form-control-lg example">
-                           *@     </div>
-                            </div>
-                            <div>
-                               @* @if (!String.IsNullOrEmpty(Model.ResultOperation.Message))
-                                {
-                                    <div class="alert @(Model.ResultOperation.IsValid ? "alert-success" : "alert-danger")" role="alert">
-                                        @Model.ResultOperation.Message
-                                    </div>
-                                }*@
-                            </div>
-                            <div class="d-grid gap-2 d-md-flex justify-content-center">
-                                    <button class="btn btn-success btn-lg" onClick="updateRow()" @*asp-page-handler="CarIn"*@>In</button>
-                                <button class="btn btn-danger btn-lg" asp-page-handler="CarOut">Out</button>
-                            </div>
+                              
+                                        <div id="alert"  role="alert">
+                                      
+                                        </div>
+                                
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-center">
+                                        <button class="btn btn-success btn-lg required" onClick="OnPostCarInAsync()">In</button>
+                                        <button class="btn btn-danger btn-lg required"  onClick="OnPostCarOutAsync()">Out</button>
+                                </div>
 
-                        </form>
-
-
+                            </div>
                     </div>
                     <div class="col-md-6">
                         <a class="btn btn-primary" onclick="showModal()">View more info (stats)</a>

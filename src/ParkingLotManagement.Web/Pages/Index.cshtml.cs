@@ -28,17 +28,21 @@ namespace ParkingLotManagement.Web.Pages
         }
 
         #region PostMethods
-        public async Task<ActionResult> OnPostCarOutAsync(string tagNumber)
+        public async Task<ActionResult> OnGetCarInAsync(string tagNumber, InOutParkingDTO tdo)
         {
             try
             {
+                if (tagNumber == null )
+                {
+                    return BadRequest("please fill out the field");
+                }
                 var parkedDTO = new InOutParkingDTO() { TagNumber = tagNumber };
-                var operationResult = await _parkingServices.Update(parkedDTO);
+                var operationResult = await _parkingServices.Add(parkedDTO);
                 if (operationResult.IsValid)
                 {
-                    return new EmptyResult();
+                    return new JsonResult(operationResult.Message);
                 }
-                return BadRequest("An error has occurred");
+                return BadRequest(operationResult.Message);
             }
             catch (Exception ex)
             {
@@ -46,18 +50,21 @@ namespace ParkingLotManagement.Web.Pages
                 return BadRequest("An error has occurred");
             }
         }
-
-        public async Task<ActionResult> OnPostCarInAsync(string tagNumber)
+        public async Task<ActionResult> OnGetCarOutAsync(string tagNumber)
         {
             try
             {
+                if (tagNumber == null)
+                {
+                    return BadRequest("please fill out the field");
+                }
                 var parkedDTO = new InOutParkingDTO() { TagNumber = tagNumber };
-                var operationResult = await _parkingServices.Add(parkedDTO);
+                var operationResult = await _parkingServices.Update(parkedDTO);
                 if (operationResult.IsValid)
                 {
-                    return new EmptyResult();
+                    return new JsonResult(operationResult.Message);
                 }
-                return BadRequest("An error has occurred");
+                return BadRequest(operationResult.Message);
             }
             catch (Exception ex)
             {
@@ -169,12 +176,5 @@ namespace ParkingLotManagement.Web.Pages
         }
         #endregion GetMethods
 
-        #region ExtendedMethods
-        public double ElapsedTime(DateTime dateTime)
-        {
-            TimeSpan totalHoursParked = DateTime.Now - dateTime;
-            return Math.Ceiling(totalHoursParked.TotalMinutes);
-        }
-        #endregion
     }
 }

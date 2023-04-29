@@ -23,17 +23,13 @@ namespace ParkingLotManagement.Application.Services
 
         public async Task<List<ParkedCarDTO>> GetAllAsync()
         {
-         var parked=await _parkingRepository.GetAllAsync();
-            var parkedDto= mapper.Map<List<ParkedCarDTO>>(parked);
+            var parked = await _parkingRepository.GetAllAsync();
+            var parkedDto = mapper.Map<List<ParkedCarDTO>>(parked);
             foreach (var obj in parkedDto)
             {
                 TimeSpan totalHoursParked = DateTime.Now - obj.EntryTime;
                 obj.ElapsedTime = Math.Ceiling(totalHoursParked.TotalMinutes);
             }
-            parkedDto.Add(new ParkedCarDTO { TagNumber="AAA",EntryTime=DateTime.Now,ElapsedTime=12});
-            parkedDto.Add(new ParkedCarDTO { TagNumber = "BBB", EntryTime = DateTime.Now, ElapsedTime = 3 });
-            parkedDto.Add(new ParkedCarDTO { TagNumber = "CCC", EntryTime = DateTime.Now, ElapsedTime = 5 });
-            parkedDto.Add(new ParkedCarDTO { TagNumber = "DDD", EntryTime = DateTime.Now, ElapsedTime = 8 });
             return parkedDto;
         }
 
@@ -43,7 +39,7 @@ namespace ParkingLotManagement.Application.Services
             if (string.IsNullOrEmpty(parking.TagNumber) || string.IsNullOrWhiteSpace(parking.TagNumber))
             {
                 resultOperation.IsValid = false;
-                resultOperation.Message = "Tag Number can't be null";
+                resultOperation.Message = "Tag number is required";
                 return resultOperation;
             }
             var result = await _parkingRepository.GetLastParkingByTag(parking.TagNumber);
@@ -115,7 +111,7 @@ namespace ParkingLotManagement.Application.Services
             if (string.IsNullOrEmpty(parking.TagNumber) || string.IsNullOrWhiteSpace(parking.TagNumber))
             {
                 resultOperation.IsValid = false;
-                resultOperation.Message = "Tag Number shoud have a value";
+                resultOperation.Message = "Tag number is required";
                 return resultOperation;
             }
             

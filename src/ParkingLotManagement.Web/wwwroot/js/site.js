@@ -1,13 +1,14 @@
 ﻿
 
-$(document).ready(function () {
-    OnGetCurrentParkedCarsAsync();
+$(document).ready(function () {   
     OnGetHourlyFeeAsync();
     OnGetCapacitySpotsAsync();  
     OnGetAvailableSpotsAsync('#availableSpost');
+    OnGetCurrentParkedCarsAsync();
 });
 
 const ApiService = () => {
+    
     return {
         Get(url, success, error) {
             $.ajax({
@@ -18,11 +19,12 @@ const ApiService = () => {
             });
         },
 
-        Post(url, data, success, error) {
+        Post(url, success, error) {
             $.ajax({
                 type: "POST",
                 url: url,
-                data: data,
+                /*headers: { "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val() }, */
+               /* body: JSON.stringify(data),*/
                 success: success,
                 error: error
             });
@@ -32,7 +34,13 @@ const ApiService = () => {
 const api = ApiService();
 
 const OnError = (message) => {
-    alert(message);
+   
+    $('#alert').text(message);
+    $('#alert').removeAttr("class");
+    $('#alert').addClass("alert alert-danger");
+    setTimeout(function () {
+        $('#alert').alert('dispose');
+    }, 5000);
 }
 
 const showModal = () => {
@@ -45,6 +53,47 @@ const showModal = () => {
 const closeModal = () => {
     $('#form-modal').modal('hide');
 }
+const showSuccessAlert = (data) => {
+    $('#alert').text(data);
+    $('#alert').removeAttr("class");
+    $('#alert').addClass("alert alert-success");
+}
+
+
+const OnPostCarInAsync = () => {
+    var tagNumber = $('#tagNumber').val();
+    if (tagNumber === "") {
+        OnError("Tag number is required");
+        return;
+    }
+    let body = { tagNumber: tagNumber };
+    api.Get("/?handler=CarIn&tagNumber=" + tagNumber
+        , (data) => {
+            OnGetAvailableSpotsAsync('#availableSpost');
+            OnGetCurrentParkedCarsAsync();
+            $('#tagNumber').val('');
+            showSuccessAlert(data);
+        }
+        , (response) => { OnError(response.responseText) });
+    
+}
+const OnPostCarOutAsync = () => {
+    var tagNumber = $('#tagNumber').val();
+    if (tagNumber === "") {
+        OnError("Tag number is required");
+        return;
+    }
+      
+    let data = { tagNumber: tagNumber };
+    api.Get("/?handler=CarOut&tagNumber=" + tagNumber
+        , (data) => {
+            OnGetAvailableSpotsAsync('#availableSpost');
+            OnGetCurrentParkedCarsAsync();
+            $('#tagNumber').val('');
+            showSuccessAlert(data);
+            }
+        , (response) => { OnError(response.responseText) });
+}
 
 const OnGetAvailableSpotsAsync = (id) => {
     api.Get("/?handler=AvailableSpots"
@@ -52,8 +101,8 @@ const OnGetAvailableSpotsAsync = (id) => {
         , OnError);
 }
 
-
 const OnGetCurrentParkedCarsAsync = () => {
+
     api.Get("/?handler=CurrentParkedCars"
         , (data) => { $("#spotsTaken").text(data.data.length); fillDataTable(data); }
         , OnError);
@@ -85,8 +134,9 @@ const OnGetAverageRevenuePerDayAsync = () => {
 }
 
 const fillDataTable = (data) => {
-    $('#parkedCars').dataTable({
+    var table = $('#parkedCars').dataTable({
         "aaData": data.data,
+        "bDestroy": true,
         columns: [{
             data: "tagNumber"
         }, {
@@ -97,4 +147,3 @@ const fillDataTable = (data) => {
         }]
     })
 }
-

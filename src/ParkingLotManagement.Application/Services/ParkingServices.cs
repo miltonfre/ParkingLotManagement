@@ -5,6 +5,7 @@ using ParkingLotManagement.Application.Validators;
 using ParkingLotManagement.Core.Entities;
 using ParkingLotManagement.Domain.DTOs;
 using ParkingLotManagement.Infrastructure.Repositories;
+using System;
 
 namespace ParkingLotManagement.Application.Services
 {
@@ -23,7 +24,17 @@ namespace ParkingLotManagement.Application.Services
         public async Task<List<ParkedCarDTO>> GetAllAsync()
         {
          var parked=await _parkingRepository.GetAllAsync();
-            return mapper.Map<List<ParkedCarDTO>>(parked);
+            var parkedDto= mapper.Map<List<ParkedCarDTO>>(parked);
+            foreach (var obj in parkedDto)
+            {
+                TimeSpan totalHoursParked = DateTime.Now - obj.EntryTime;
+                obj.ElapsedTime = Math.Ceiling(totalHoursParked.TotalMinutes);
+            }
+            parkedDto.Add(new ParkedCarDTO { TagNumber="AAA",EntryTime=DateTime.Now,ElapsedTime=12});
+            parkedDto.Add(new ParkedCarDTO { TagNumber = "BBB", EntryTime = DateTime.Now, ElapsedTime = 3 });
+            parkedDto.Add(new ParkedCarDTO { TagNumber = "CCC", EntryTime = DateTime.Now, ElapsedTime = 5 });
+            parkedDto.Add(new ParkedCarDTO { TagNumber = "DDD", EntryTime = DateTime.Now, ElapsedTime = 8 });
+            return parkedDto;
         }
 
         public async Task<OperationResult> Add(InOutParkingDTO parking)

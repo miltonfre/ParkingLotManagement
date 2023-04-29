@@ -13,30 +13,11 @@ namespace ParkingLotManagement.Web.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
-
         private readonly IParkingServices _parkingServices;
         private readonly IStatsService _statsServices;
         private readonly ICustomConfigureServices _customConfigure;
-        private InOutParkingDTO parkedDTO { get; set; }
 
-        [BindProperty]
-        public IReadOnlyList<ParkedCarDTO> parkedCars { get; set; }
-        [BindProperty]
-        [Required]
-        public string tagNumber { get; set; }
-        [BindProperty]
-        public decimal hourlyFee { get; set; }
-        [BindProperty]
-        public int capacitySpots { get; set; }
-        [BindProperty]
-        public decimal averageRevenuePerDay { get; set; }
-        [BindProperty]
-        public decimal averageCarsPerDay { get; set; }
-        [BindProperty]
-        public decimal totalRevenueToday { get; set; }
 
-        [BindProperty]
-        public OperationResult ResultOperation { get; set; }=new OperationResult();
 
         public IndexModel(ILogger<IndexModel> logger, IParkingServices parkingServices, ICustomConfigureServices customConfigure, IStatsService statsServices)
         {
@@ -44,68 +25,156 @@ namespace ParkingLotManagement.Web.Pages
             _parkingServices = parkingServices;
             _customConfigure = customConfigure;
             _logger = logger;
-            parkedDTO = null ?? new InOutParkingDTO();
         }
 
+        #region PostMethods
+        public async Task<ActionResult> OnPostCarOutAsync(string tagNumber)
+        {
+            try
+            {
+                var parkedDTO = new InOutParkingDTO() { TagNumber = tagNumber };
+                var operationResult = await _parkingServices.Update(parkedDTO);
+                if (operationResult.IsValid)
+                {
+                    return new EmptyResult();
+                }
+                return BadRequest("An error has occurred");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest("An error has occurred");
+            }
+        }
+
+        public async Task<ActionResult> OnPostCarInAsync(string tagNumber)
+        {
+            try
+            {
+                var parkedDTO = new InOutParkingDTO() { TagNumber = tagNumber };
+                var operationResult = await _parkingServices.Add(parkedDTO);
+                if (operationResult.IsValid)
+                {
+                    return new EmptyResult();
+                }
+                return BadRequest("An error has occurred");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest("An error has occurred");
+            }
+        }
+        # endregion PostMethods
+
+        #region GetMethods
         public async Task<IActionResult> OnGet()
         {
-            parkedCars=await _parkingServices.GetAllAsync();
-            hourlyFee=_customConfigure.HourlyFee();
-            capacitySpots=_customConfigure.CapacitySpots();
-            averageRevenuePerDay =  await _statsServices.AverageRevenuePerDay();
-            averageCarsPerDay =     await _statsServices.AverageCarsPerDay();
-            totalRevenueToday =     await _statsServices.TotalRevenueToday();
-
-            return Page();
-        }
-
-        public async Task<IActionResult> OnPostCarOutAsync()
-        {
-            try
-            {
-                parkedDTO.TagNumber = tagNumber;
-                ResultOperation = await _parkingServices.Update(parkedDTO);
-                if (ResultOperation.IsValid)
-                {
-                    tagNumber = "";
-                }
-            }
-            catch (Exception ex)
-            {
-                ResultOperation.IsValid= false;
-                ResultOperation.Message = "An error has occurred";
-                _logger.LogError(ex, ex.Message);
-            }
-            await OnGet();
-            return Page();
-        }
-
-        public async Task<IActionResult> OnPostCarInAsync()
-        {
-            try
-            {
-                parkedDTO.TagNumber = tagNumber;
-                ResultOperation = await _parkingServices.Add(parkedDTO);
-                if (ResultOperation.IsValid)
-                {
-                    tagNumber = "";
-                }
-            }
-            catch (Exception ex)
-            {
-                ResultOperation.IsValid = false;
-                ResultOperation.Message = "An error has occurred";
-                _logger.LogError(ex, ex.Message);
-            }
-            await OnGet();
             return Page();
         }
 
        
+        public async Task<IActionResult> OnGetCurrentParkedCarsAsync()
+        {
+            try
+            {
+                var parkedCars = await _parkingServices.GetAllAsync();
+                return new JsonResult(new { data = parkedCars });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest("An error has occurred");
+            }
+        }
+        public IActionResult OnGetHourlyFeeAsync()
+        {
+            try
+            {
+                var hourlyFee = _customConfigure.HourlyFee();
+                return new JsonResult(hourlyFee);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest("An error has occurred");
+            }
+        }
+        public IActionResult OnGetCapacitySpotsAsync()
+        {
+            try
+            {
+                var capacitySpots = _customConfigure.CapacitySpots(); ;
+                return new JsonResult(capacitySpots);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest("An error has occurred");
+            }
+        }
+        public async Task<IActionResult> OnGetTotalRevenueTodayAsync()
+        {
+            try
+            {
+                var totalRevenueToday = await _statsServices.TotalRevenueToday();
+                return new JsonResult(totalRevenueToday);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest("An error has occurred");
+            }
+        }
+        public async Task<IActionResult> OnGetAverageCarsPerDayAsync()
+        {
+            try
+            {
+                var averageCarsPerDay = await _statsServices.AverageCarsPerDay();
+                return new JsonResult(averageCarsPerDay);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest("An error has occurred");
+            }
+        }
+        public async Task<IActionResult> OnGetAverageRevenuePerDayAsync()
+        {
+            try
+            {
+                var averageRevenuePerDay = await _statsServices.AverageRevenuePerDay();
+                return new JsonResult(averageRevenuePerDay);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest("An error has occurred");
+            }
+        }
+
+        public async Task<IActionResult> OnGetAvailableSpotsAsync()
+        {
+            try
+            {
+                var parkedCars = await _parkingServices.GetAllAsync();
+                var capacitySpots = _customConfigure.CapacitySpots();
+                return new JsonResult(capacitySpots- parkedCars.Count);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest("An error has occurred");
+            }
+        }
+        #endregion GetMethods
+
+        #region ExtendedMethods
         public double ElapsedTime(DateTime dateTime)
         {
             TimeSpan totalHoursParked = DateTime.Now - dateTime;
             return Math.Ceiling(totalHoursParked.TotalMinutes);
         }
+        #endregion
     }
 }

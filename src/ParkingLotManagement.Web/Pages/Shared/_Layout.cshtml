@@ -8,10 +8,11 @@
     <title>Parking Lot Management</title>
     <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicon.png">
     <link href="~/css/style.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
 </head>
 <body>
    
-
+   
     <!-- ============================================================== -->
     <!-- Main wrapper - style you can find in pages.scss -->
     <!-- ============================================================== -->
@@ -100,8 +101,11 @@
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    @*<script type="module" src="~/js/pages/index.js" asp-append-version="true"></script>*@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script  src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/app-style-switcher.js"></script>
     <script src="~/lib/jquery-sparkline/jquery.sparkline.min.js"></script>
     <!--Wave Effects -->
@@ -115,7 +119,7 @@
     <script src="~/lib/chartist/dist/chartist.min.js"></script>
     @*<script src="~/js/dashboard1.js"></script>*@
     @*<script src="~/lib/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>*@
-        @*<script src="~/js/pages/index.js"></script>*@
+    
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

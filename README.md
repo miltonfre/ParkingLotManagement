@@ -17,7 +17,7 @@ In this application uses razor pages and .Net 6 and In this solution, the princi
 ## Getting Started
 The easiest way to get started is clone this repository and run the application. The application has implemented an IHost extension and runs all querys requiered for the application even the database creation. the only thing you need take care is if you have localdb running in your personal laptop, 
 
-If you prefer in another server just go to the app.settings and mofify the connection strings.
+If you prefer in another server just go to the appsettings.json and mofify the connection strings.
 ### Caution
       *InitialConnectionString* should have Initial Catalog "master" this CS is only to create the new database (ParkingDB) 
       

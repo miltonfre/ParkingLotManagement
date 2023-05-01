@@ -34,12 +34,21 @@ const ApiService = () => {
 const api = ApiService();
 
 const OnError = (message) => {
-   
+    $('#alert').show();
     $('#alert').text(message);
     $('#alert').removeAttr("class");
     $('#alert').addClass("alert alert-danger");
     setTimeout(function () {
-        $('#alert').alert('dispose');
+        $('#alert').hide();
+    }, 5000);
+};
+const showSuccessAlert = (data) => {
+    $('#alert').show();
+    $('#alert').text(data);
+    $('#alert').removeAttr("class");
+    $('#alert').addClass("alert alert-success");
+    setTimeout(function () {
+        $('#alert').hide();
     }, 5000);
 }
 
@@ -52,11 +61,6 @@ const showModal = () => {
 }
 const closeModal = () => {
     $('#form-modal').modal('hide');
-}
-const showSuccessAlert = (data) => {
-    $('#alert').text(data);
-    $('#alert').removeAttr("class");
-    $('#alert').addClass("alert alert-success");
 }
 
 

@@ -4,25 +4,30 @@
     ViewData["Title"] = "Home page";
 }
 <div class="container-fluid">
-    <!-- ============================================================== -->
-    <!-- Start Page Content -->
-    <!-- ============================================================== -->
-    <!-- Row -->
+ 
     <div class="row">
-        
-        <!-- Column -->
-        <!-- Column -->
         <div class="col-md-6">
             <div class="row">
                 <div>   
                 <div class="card">
                     <div class="card-body">
-                            <div class="form-horizontal form-material">
+                            <form class="form-horizontal form-material">
                                 <div class="form-group mb-4">
                                     <label for="tagNumber">Tag Number:</label>
                                     <div>
-                                        <input class="form-control form-control-lg required" required="" type="text" id="tagNumber" maxlength="10" name="tagNumber" placeholder="Tag Number" aria-label="tag number" />
-                                 </div>
+                                        <input class="form-control form-control-lg required" 
+                                                type="text" 
+                                                id="tagNumber" 
+                                                maxlength="10" 
+                                                name="tagNumber" 
+                                                placeholder="Tag Number" 
+                                                aria-label="tag number"
+                                               @* pattern="[A-Z]{1,3}-[A-Z]{1,2}-[0-9]{1,4}" *@
+                                                required />
+                                        <div class="invalid-feedback">
+                                            Tag Number must have a value and and have a valid license plate number
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
                               
@@ -36,7 +41,7 @@
                                         <button class="btn btn-danger btn-lg required"  onClick="OnPostCarOutAsync()">Out</button>
                                 </div>
 
-                            </div>
+                            </form>
                     </div>
                     <div class="col-md-6">
                         <a class="btn btn-primary" onclick="showModal()">View more info (stats)</a>

@@ -8,5 +8,6 @@ namespace ParkingLotManagement.Infrastructure.Repositories
         Task<bool> Update(int id, Parking parking);
         Task<List<Parking>> GetAllAsync();
         Task<Parking> GetLastParkingByTag(string tagNumber);
+        Task<int> CountCurrentParkedAsync();
     }
 }

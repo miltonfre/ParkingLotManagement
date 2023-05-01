@@ -86,6 +86,27 @@ namespace ParkingLotManagement.Infrastructure.Repositories
             return null;
 
         }
+        public async Task<int> CountCurrentParkedAsync()
+        {
+
+            var connection = new SqlConnection((_configuration["DatabaseSettings:ConnectionString"]));
+            connection.Open();
+
+            using var command = new SqlCommand
+            {
+                Connection = connection
+            };
+
+            command.CommandText = @"SELECT COUNT( Id) FROM Parking WHERE ExitTime IS NULL";
+            var result = await command.ExecuteScalarAsync();
+
+            var currentParked = Convert.ToInt32(result);
+            return currentParked;
+        }
+
+       
+    
+
         public async Task<List<Parking>> GetAllAsync()
         {
 

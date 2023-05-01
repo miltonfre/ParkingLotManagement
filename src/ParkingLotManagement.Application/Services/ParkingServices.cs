@@ -46,7 +46,15 @@ namespace ParkingLotManagement.Application.Services
             if (result != null && result.ExitTime == null)
             {
                 resultOperation.IsValid = false;
-                resultOperation.Message = "the vehicle has not entered";
+                resultOperation.Message = "The vehicle is already in the parking";
+                return resultOperation;
+            }
+           var capacity= _customConfigureServices.CapacitySpots();
+            var currents = await _parkingRepository.CountCurrentParkedAsync();
+            if (currents>=capacity)
+            {
+                resultOperation.IsValid = false;
+                resultOperation.Message = "No available spots";
                 return resultOperation;
             }
             var parkingAdd=mapper.Map<Parking>(parking);
@@ -62,8 +70,8 @@ namespace ParkingLotManagement.Application.Services
         private decimal AmmountToPay(Parking parking)
         {
             var hourlyFee = _customConfigureServices.HourlyFee();
-            TimeSpan totalHoursParked = parking.EntryTime - DateTime.Now;
-            var upperHour = (Math.Ceiling((decimal)totalHoursParked.TotalHours) + 1);
+            TimeSpan totalHoursParked = DateTime.Now- parking.EntryTime ;
+            var upperHour = (Math.Ceiling((decimal)totalHoursParked.TotalHours));
             return upperHour  * hourlyFee;
         } 
 

@@ -14,6 +14,7 @@ In this application uses razor pages and .Net 6 and In this solution, the princi
 * ADO.NET
 * Razor
 * MsTests
+# Moq
 
 ## Getting Started
 The easiest way to get started is clone this repository and run the application. The application has implemented an IHost extension and runs all querys requiered for the application even the database creation. the only thing you need take care is if you have localdb running in your personal laptop, 

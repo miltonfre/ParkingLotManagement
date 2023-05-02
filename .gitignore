@@ -14,3 +14,5 @@
 /src/ParkingLotManagement.Core/obj
 /src/ParkingLotManagement.Infrastructure/bin/Debug/net6.0
 /src/ParkingLotManagement.Web/bin/Debug/net6.0
+/tests/ParkingLotManagement.Web.Test/bin/Debug/net6.0
+/tests/ParkingLotManagement.Web.Test/obj

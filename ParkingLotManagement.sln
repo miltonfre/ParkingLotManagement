@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{47345C85
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{5A0B0362-8CC0-4FE3-B2BD-ED2A67F09812}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingLotManagement.Web.Test", "tests\ParkingLotManagement.Web.Test\ParkingLotManagement.Web.Test.csproj", "{F9EABDB6-D4EB-4265-8A08-0A28179B3006}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{194B87FB-5EF7-473C-8F97-64E146F2ABC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{194B87FB-5EF7-473C-8F97-64E146F2ABC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{194B87FB-5EF7-473C-8F97-64E146F2ABC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9EABDB6-D4EB-4265-8A08-0A28179B3006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9EABDB6-D4EB-4265-8A08-0A28179B3006}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9EABDB6-D4EB-4265-8A08-0A28179B3006}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9EABDB6-D4EB-4265-8A08-0A28179B3006}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +55,7 @@ Global
 		{2CD85B30-E98F-4CF0-9154-AFB1187E9E22} = {D8C943BC-33AA-478C-AC0E-40D5FE2CBCC5}
 		{194B87FB-5EF7-473C-8F97-64E146F2ABC3} = {D8C943BC-33AA-478C-AC0E-40D5FE2CBCC5}
 		{5A0B0362-8CC0-4FE3-B2BD-ED2A67F09812} = {47345C85-DD9F-4D34-BC65-63DF70142467}
+		{F9EABDB6-D4EB-4265-8A08-0A28179B3006} = {47345C85-DD9F-4D34-BC65-63DF70142467}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {41C08C90-9951-4A92-A713-1A2763E9B6DA}
